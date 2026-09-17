@@ -1,16 +1,56 @@
-# React + Vite
+# Electron Project Setup Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Follow the steps below to set up the Electron project on your system.
 
-Currently, two official plugins are available:
+## 1. Clone the Repository
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Clone the project repository from GitHub:
 
-## React Compiler
+```bash
+git clone https://github.com/JACOBIAN01/Athena
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Then navigate into the project folder:
 
-## Expanding the ESLint configuration
+```bash
+cd <PROJECT_FOLDER>
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 2. Install Project Dependencies
+
+Install all the dependencies required by the project:
+
+```bash
+npm install
+```
+
+This command reads the `package.json` file and installs the required packages.
+
+---
+
+## 3. Install Electron
+
+Install Electron as a development dependency:
+
+```bash
+npm install electron --save-dev
+```
+
+The `--save-dev` flag adds Electron to the `devDependencies` section of your `package.json`.
+
+---
+
+## Complete Setup
+
+Your basic setup commands should look like this:
+
+```bash
+git clone https://github.com/JACOBIAN01/Athena
+cd <PROJECT_FOLDER>
+npm install
+npm install electron --save-dev
+```
+
+> **Note:** Make sure Node.js and npm are installed on your system before running these commands.
