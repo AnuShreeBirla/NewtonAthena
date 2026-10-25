@@ -1,56 +1,32 @@
-# Electron Project Setup Guide
+# myAthena
 
-Follow the steps below to set up the Electron project on your system.
+myAthena is an Electron and React test workspace with a webcam preview, a 14-minute preparation countdown, full-screen test mode, and periodic local photo capture.
 
-## 1. Clone the Repository
+## Requirements
 
-Clone the project repository from GitHub:
+- Node.js and npm
+- A webcam for camera and photo features
 
-```bash
-git clone https://github.com/JACOBIAN01/Athena
-```
-
-Then navigate into the project folder:
-
-```bash
-cd <PROJECT_FOLDER>
-```
-
----
-
-## 2. Install Project Dependencies
-
-Install all the dependencies required by the project:
+## Run locally
 
 ```bash
 npm install
+npm start
 ```
 
-This command reads the `package.json` file and installs the required packages.
+`npm start` launches the Vite development server and the Electron window. Allow camera access when prompted.
 
----
-
-## 3. Install Electron
-
-Install Electron as a development dependency:
+## Build
 
 ```bash
-npm install electron --save-dev
+npm run build
+npm run package
 ```
 
-The `--save-dev` flag adds Electron to the `devDependencies` section of your `package.json`.
+The package command creates a macOS disk image in `release/`.
 
----
+## Photo storage
 
-## Complete Setup
+Photos are captured every 10 seconds during an active test. In development, they are saved in the project `photos/` folder. Packaged builds store them in Electron's application data directory under `photos/`.
 
-Your basic setup commands should look like this:
-
-```bash
-git clone https://github.com/JACOBIAN01/Athena
-cd <PROJECT_FOLDER>
-npm install
-npm install electron --save-dev
-```
-
-> **Note:** Make sure Node.js and npm are installed on your system before running these commands.
+Camera frames and saved photos stay on the local machine. The app asks before entering full-screen mode and before quitting a test.
