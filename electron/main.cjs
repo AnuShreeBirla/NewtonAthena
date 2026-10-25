@@ -3,6 +3,7 @@ const fs = require('node:fs/promises')
 const path = require('node:path')
 
 let win
+let allowQuit = false
 
 function createWindow() {
   win = new BrowserWindow({
@@ -21,6 +22,16 @@ function createWindow() {
   } else {
     win.loadURL('http://127.0.0.1:5173')
   }
+
+  win.webContents.on('before-input-event', (event, input) => {
+    if (win.isFullScreen() && input.key === 'Escape' && input.type === 'keyDown') {
+      event.preventDefault()
+    }
+  })
+
+  win.on('closed', () => {
+    win = null
+  })
 }
 
 ipcMain.handle('request-full-screen', async () => {
@@ -54,6 +65,33 @@ ipcMain.handle('save-photo', async (_event, imageData) => {
   const filename = `myathena-${Date.now()}.jpg`
   await fs.writeFile(path.join(photosDirectory, filename), photoBuffer)
   return { filename }
+})
+
+app.on('before-quit', (event) => {
+  if (allowQuit) return
+  event.preventDefault()
+
+  if (!win) {
+    allowQuit = true
+    app.quit()
+    return
+  }
+
+  const result = dialog.showMessageBoxSync(win, {
+    type: 'warning',
+    title: 'Quit Test?',
+    message: 'Are you sure you want to quit the test?',
+    detail: 'Your test session will be interrupted if you quit.',
+    buttons: ['Cancel', 'Quit Test'],
+    defaultId: 0,
+    cancelId: 0,
+    noLink: true,
+  })
+
+  if (result === 1) {
+    allowQuit = true
+    app.quit()
+  }
 })
 
 app.whenReady().then(createWindow)
