@@ -38,6 +38,11 @@
     "productName": "Newton Athena",
     "directories": { "output": "release" },
     "files": ["dist/**/*", "electron/**/*", "package.json"],
-    "mac": { "target": "dmg" }
+    "mac": {
+      "target": "dmg",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Newton Athena uses your camera for the exam preview and periodic local test photos."
+      }
+    }
   }
 }
