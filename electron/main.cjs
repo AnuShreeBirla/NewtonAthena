@@ -9,7 +9,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1000,
     height: 700,
-    title: 'myAthena',
+    title: 'Newton Athena',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -62,7 +62,7 @@ ipcMain.handle('save-photo', async (_event, imageData) => {
     : path.join(app.getAppPath(), 'photos')
   await fs.mkdir(photosDirectory, { recursive: true })
 
-  const filename = `myathena-${Date.now()}.jpg`
+  const filename = `newton-athena-${Date.now()}.jpg`
   await fs.writeFile(path.join(photosDirectory, filename), photoBuffer)
   return { filename }
 })

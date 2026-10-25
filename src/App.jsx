@@ -108,9 +108,9 @@ function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand">
-          <div className="brand-icon">A</div>
+          <div className="brand-icon">N</div>
           <div>
-            <h1>myAthena</h1>
+          <h1>Newton Athena</h1>
             <p>Camera Test Workspace</p>
           </div>
         </div>
@@ -147,7 +147,7 @@ function App() {
         {captureError && <p className="capture-error">{captureError}</p>}
         {capturedPhoto && <section className="captured-photo"><h3>Latest test photo</h3><img src={capturedPhoto} alt="Latest camera capture" /><p>{saveStatus}</p></section>}
 
-        <footer className="app-footer">myAthena <span>·</span> Development build</footer>
+        <footer className="app-footer">Newton Athena <span>·</span> Development build</footer>
       </main>
     </div>
   )

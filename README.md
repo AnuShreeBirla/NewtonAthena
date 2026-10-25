@@ -1,6 +1,6 @@
-# myAthena
+# Newton Athena
 
-myAthena is an Electron and React test workspace with a webcam preview, a 14-minute preparation countdown, full-screen test mode, and periodic local photo capture.
+Newton Athena is an Electron and React test workspace with a webcam preview, a 14-minute preparation countdown, full-screen test mode, and periodic local photo capture.
 
 ## Requirements
 

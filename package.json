@@ -1,5 +1,5 @@
 {
-  "name": "myathena",
+  "name": "newton-athena",
   "private": true,
   "version": "0.0.0",
   "main": "./electron/main.cjs",
@@ -34,8 +34,8 @@
     "vite": "^8.3.0"
   },
   "build": {
-    "appId": "com.myathena.desktop",
-    "productName": "myAthena",
+    "appId": "com.newtonathena.desktop",
+    "productName": "Newton Athena",
     "directories": { "output": "release" },
     "files": ["dist/**/*", "electron/**/*", "package.json"],
     "mac": { "target": "dmg" }
