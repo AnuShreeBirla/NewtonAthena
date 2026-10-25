@@ -12,6 +12,7 @@ function App() {
   const [fullScreenApproved, setFullScreenApproved] = useState(false)
   const [capturedPhoto, setCapturedPhoto] = useState('')
   const [captureError, setCaptureError] = useState('')
+  const [saveStatus, setSaveStatus] = useState('')
 
   useEffect(() => {
     if (elapsedSeconds <= 0) return undefined
@@ -69,7 +70,7 @@ function App() {
 
   useEffect(() => {
     if (!sessionActive || cameraStatus !== 'active') return undefined
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (captureBusyRef.current) return
       captureBusyRef.current = true
       try {
@@ -84,7 +85,10 @@ function App() {
         const context = canvas.getContext('2d')
         if (!context) throw new Error('Could not capture photo.')
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
-        setCapturedPhoto(canvas.toDataURL('image/jpeg', 0.92))
+        const imageData = canvas.toDataURL('image/jpeg', 0.92)
+        setCapturedPhoto(imageData)
+        const result = await window.electronAPI.savePhoto(imageData)
+        setSaveStatus(`Saved ${result.filename}`)
         setCaptureError('')
       } catch (error) {
         setCaptureError(error.message)
@@ -140,7 +144,7 @@ function App() {
         </section>
 
         {captureError && <p className="capture-error">{captureError}</p>}
-        {capturedPhoto && <section className="captured-photo"><h3>Latest test photo</h3><img src={capturedPhoto} alt="Latest camera capture" /></section>}
+        {capturedPhoto && <section className="captured-photo"><h3>Latest test photo</h3><img src={capturedPhoto} alt="Latest camera capture" /><p>{saveStatus}</p></section>}
 
         <footer className="app-footer">myAthena <span>·</span> Development build</footer>
       </main>

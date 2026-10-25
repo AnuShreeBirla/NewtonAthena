@@ -1,4 +1,5 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron')
+const fs = require('node:fs/promises')
 const path = require('node:path')
 
 let win
@@ -37,6 +38,22 @@ ipcMain.handle('request-full-screen', async () => {
   if (result.response !== 1) return false
   win.setFullScreen(true)
   return true
+})
+
+ipcMain.handle('save-photo', async (_event, imageData) => {
+  if (typeof imageData !== 'string' || !imageData.startsWith('data:image/jpeg;base64,')) {
+    throw new Error('Invalid JPEG image data.')
+  }
+
+  const photoBuffer = Buffer.from(imageData.split(',')[1], 'base64')
+  const photosDirectory = app.isPackaged
+    ? path.join(app.getPath('userData'), 'photos')
+    : path.join(app.getAppPath(), 'photos')
+  await fs.mkdir(photosDirectory, { recursive: true })
+
+  const filename = `myathena-${Date.now()}.jpg`
+  await fs.writeFile(path.join(photosDirectory, filename), photoBuffer)
+  return { filename }
 })
 
 app.whenReady().then(createWindow)
