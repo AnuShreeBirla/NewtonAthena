@@ -8,6 +8,7 @@ function App() {
   const [cameraError, setCameraError] = useState('')
   const [elapsedSeconds, setElapsedSeconds] = useState(14 * 60)
   const [sessionActive, setSessionActive] = useState(false)
+  const [fullScreenApproved, setFullScreenApproved] = useState(false)
 
   useEffect(() => {
     if (elapsedSeconds <= 0) return undefined
@@ -38,12 +39,17 @@ function App() {
   }
 
   function startSession() {
-    if (cameraStatus !== 'active' || elapsedSeconds > 0) return
+    if (cameraStatus !== 'active' || elapsedSeconds > 0 || !fullScreenApproved) return
     setSessionActive(true)
   }
 
   function endSession() {
     setSessionActive(false)
+  }
+
+  async function enterFullScreen() {
+    const approved = await window.electronAPI.requestFullScreen()
+    if (approved) setFullScreenApproved(true)
   }
 
   function stopCamera() {
@@ -99,7 +105,7 @@ function App() {
 
         <section className="session-card">
           <div><p className="eyebrow">{elapsedSeconds === 0 ? 'TEST IS READY' : 'TEST STARTS IN'}</p><div className="timer">{hours}:{minutes}:{seconds}</div></div>
-          <button className={`session-button ${sessionActive ? 'stop-button' : ''}`} onClick={sessionActive ? endSession : startSession} disabled={!sessionActive && (elapsedSeconds > 0 || cameraStatus !== 'active')}>{sessionActive ? 'End Test' : 'Start Test'}</button>
+          <button className={`session-button ${sessionActive ? 'stop-button' : ''}`} onClick={sessionActive ? endSession : fullScreenApproved ? startSession : enterFullScreen} disabled={!sessionActive && fullScreenApproved && (elapsedSeconds > 0 || cameraStatus !== 'active')}>{sessionActive ? 'End Test' : fullScreenApproved ? 'Start Test' : 'Enter Full Screen'}</button>
         </section>
 
         <footer className="app-footer">myAthena <span>·</span> Development build</footer>
