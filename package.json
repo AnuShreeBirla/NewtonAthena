@@ -36,6 +36,7 @@
   "build": {
     "appId": "com.newtonathena.desktop",
     "productName": "Newton Athena",
+    "electronLanguages": ["en-US"],
     "directories": { "output": "release" },
     "files": ["dist/**/*", "electron/**/*", "package.json"],
     "mac": {
