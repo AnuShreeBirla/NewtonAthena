@@ -1,62 +1,62 @@
-import { useRef } from "react";
+import { useRef } from 'react'
+import './App.css'
 
 function App() {
-  const videoRef = useRef(null);
+  const videoRef = useRef(null)
 
-  async function getCamera() {
-    const videoData = await navigator.mediaDevices.getUserMedia({
-      video: true,
-    });
-    videoRef.current.srcObject = videoData;
-  }
-
-  async function getFullscreen(){
-    await document.documentElement.requestFullscreen()
+  async function startCamera() {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: { facingMode: 'user' },
+    })
+    videoRef.current.srcObject = stream
+    await videoRef.current.play()
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
-      <div className="w-full max-w-2xl">
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-9">
-          {/* Section 1: Camera */}
-          <div className="flex items-start gap-4">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Configure Camera</h3>
-              <p className="text-sm text-slate-500 mb-5">Kindly configure Camera to attempt quiz/contests.</p>
-              <div className="flex items-center gap-4">
-                <button onClick={getCamera} className="px-5 py-3 rounded-lg bg-black text-white text-sm font-semibold hover:bg-neutral-800">
-                  Get Camera Access
-                </button>
-
-                {/* Video Feed Preview */}
-                <video autoPlay ref={videoRef} className="w-40 h-24 rounded-md bg-black object-cover" />
-              </div>
-            </div>
-          </div>
-
-          <div className="h-px bg-slate-100 my-8"></div>
-
-          {/* Section 2: Fullscreen */}
-          <div className="flex items-start gap-4">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Switch to full screen</h3>
-              <button onClick={getFullscreen} className="px-5 py-3 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
-                Give Full Screen Permissions
-              </button>
-            </div>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="brand">
+          <div className="brand-icon">A</div>
+          <div>
+            <h1>myAthena</h1>
+            <p>Camera Test Workspace</p>
           </div>
         </div>
+        <div className="connection-status"><span className="status-dot" />Ready to begin</div>
+      </header>
 
-        {/* Bottom Action Buttons */}
-        <div className="flex items-center justify-between mt-6">
-          <button className="px-6 py-3 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
-            Go To Test
-          </button>
-          <div className="text-sm text-slate-500">{`Time Left: Minutes Seconds`}</div>
-        </div>
-      </div>
+      <main className="workspace">
+        <section className="welcome-section">
+          <p className="eyebrow">WORKSPACE</p>
+          <h2>Your testing space</h2>
+          <p className="subtitle">Start your camera and prepare your workspace.</p>
+        </section>
+
+        <section className="camera-card">
+          <div className="card-heading">
+            <div><h3>Camera preview</h3><p>Connect your camera to view the live feed.</p></div>
+            <span className="preview-badge">CAMERA</span>
+          </div>
+          <div className="camera-preview">
+            <video ref={videoRef} className="camera-video" autoPlay muted playsInline />
+            <div className="camera-placeholder"><div className="camera-icon">◎</div><h3>Camera not connected</h3><p>Select Start camera to request access to your camera.</p></div>
+          </div>
+          <div className="camera-footer">
+            <span>Camera preview status</span>
+            <button className="secondary-button" onClick={startCamera}>Start camera</button>
+          </div>
+        </section>
+
+        <section className="session-card">
+          <div><p className="eyebrow">TEST STARTS IN</p><div className="timer">00:14:00</div></div>
+          <button className="session-button" disabled>Enter Full Screen</button>
+        </section>
+
+        <footer className="app-footer">myAthena <span>·</span> Development build</footer>
+      </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
