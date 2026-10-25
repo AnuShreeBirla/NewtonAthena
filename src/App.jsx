@@ -7,6 +7,7 @@ function App() {
   const [cameraStatus, setCameraStatus] = useState('idle')
   const [cameraError, setCameraError] = useState('')
   const [elapsedSeconds, setElapsedSeconds] = useState(14 * 60)
+  const [sessionActive, setSessionActive] = useState(false)
 
   useEffect(() => {
     if (elapsedSeconds <= 0) return undefined
@@ -36,6 +37,15 @@ function App() {
     }
   }
 
+  function startSession() {
+    if (cameraStatus !== 'active' || elapsedSeconds > 0) return
+    setSessionActive(true)
+  }
+
+  function endSession() {
+    setSessionActive(false)
+  }
+
   function stopCamera() {
     streamRef.current?.getTracks().forEach((track) => track.stop())
     streamRef.current = null
@@ -62,7 +72,7 @@ function App() {
             <p>Camera Test Workspace</p>
           </div>
         </div>
-        <div className="connection-status"><span className="status-dot" />Ready to begin</div>
+        <div className="connection-status"><span className={`status-dot ${sessionActive ? 'active' : ''}`} />{sessionActive ? 'Session active' : 'Ready to begin'}</div>
       </header>
 
       <main className="workspace">
@@ -89,7 +99,7 @@ function App() {
 
         <section className="session-card">
           <div><p className="eyebrow">{elapsedSeconds === 0 ? 'TEST IS READY' : 'TEST STARTS IN'}</p><div className="timer">{hours}:{minutes}:{seconds}</div></div>
-          <button className="session-button" disabled>Enter Full Screen</button>
+          <button className={`session-button ${sessionActive ? 'stop-button' : ''}`} onClick={sessionActive ? endSession : startSession} disabled={!sessionActive && (elapsedSeconds > 0 || cameraStatus !== 'active')}>{sessionActive ? 'End Test' : 'Start Test'}</button>
         </section>
 
         <footer className="app-footer">myAthena <span>·</span> Development build</footer>
