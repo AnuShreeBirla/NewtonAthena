@@ -57,6 +57,7 @@ function App() {
   }
 
   function stopCamera() {
+    setSessionActive(false)
     streamRef.current?.getTracks().forEach((track) => track.stop())
     streamRef.current = null
     if (videoRef.current) videoRef.current.srcObject = null
