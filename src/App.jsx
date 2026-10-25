@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 function App() {
   const videoRef = useRef(null)
+  const streamRef = useRef(null)
   const [cameraStatus, setCameraStatus] = useState('idle')
   const [cameraError, setCameraError] = useState('')
 
@@ -14,22 +15,29 @@ function App() {
         audio: false,
         video: { facingMode: 'user' },
       })
+      streamRef.current = stream
       videoRef.current.srcObject = stream
       await videoRef.current.play()
       setCameraStatus('active')
     } catch (error) {
+      streamRef.current?.getTracks().forEach((track) => track.stop())
+      streamRef.current = null
       setCameraStatus('error')
       setCameraError(`Could not start camera: ${error.message}`)
     }
   }
 
   function stopCamera() {
-    const stream = videoRef.current?.srcObject
-    stream?.getTracks().forEach((track) => track.stop())
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
     if (videoRef.current) videoRef.current.srcObject = null
     setCameraStatus('idle')
     setCameraError('')
   }
+
+  useEffect(() => () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+  }, [])
 
   return (
     <div className="app-shell">
