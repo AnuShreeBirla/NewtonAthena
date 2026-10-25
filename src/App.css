@@ -39,4 +39,8 @@
 .session-button:disabled { opacity: .5; cursor: not-allowed; }
 .app-footer { margin-top: 28px; color: #9599a6; text-align: center; font-size: 12px; }
 .app-footer span { padding: 0 5px; }
+.capture-error { color: #b93434; font-size: 13px; }
+.captured-photo { margin-top: 20px; padding: 18px; border: 1px solid #e6e7ef; border-radius: 12px; background: #fff; }
+.captured-photo h3 { margin: 0 0 14px; font-size: 16px; }
+.captured-photo img { display: block; width: 100%; max-width: 480px; max-height: 360px; object-fit: contain; border-radius: 8px; background: #111; }
 @media (max-width: 600px) { .app-header { padding: 16px 20px; } .connection-status { font-size: 11px; } .workspace { padding-top: 28px; } .camera-card, .session-card { padding: 16px; } .camera-preview { min-height: 220px; } .session-card { align-items: flex-start; flex-direction: column; } }

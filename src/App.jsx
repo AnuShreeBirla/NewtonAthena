@@ -4,11 +4,14 @@ import './App.css'
 function App() {
   const videoRef = useRef(null)
   const streamRef = useRef(null)
+  const captureBusyRef = useRef(false)
   const [cameraStatus, setCameraStatus] = useState('idle')
   const [cameraError, setCameraError] = useState('')
   const [elapsedSeconds, setElapsedSeconds] = useState(14 * 60)
   const [sessionActive, setSessionActive] = useState(false)
   const [fullScreenApproved, setFullScreenApproved] = useState(false)
+  const [capturedPhoto, setCapturedPhoto] = useState('')
+  const [captureError, setCaptureError] = useState('')
 
   useEffect(() => {
     if (elapsedSeconds <= 0) return undefined
@@ -64,6 +67,34 @@ function App() {
     streamRef.current?.getTracks().forEach((track) => track.stop())
   }, [])
 
+  useEffect(() => {
+    if (!sessionActive || cameraStatus !== 'active') return undefined
+    const interval = setInterval(() => {
+      if (captureBusyRef.current) return
+      captureBusyRef.current = true
+      try {
+        const video = videoRef.current
+        if (!video || video.readyState < 2 || !video.videoWidth) {
+          setCaptureError('Camera is not ready.')
+          return
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        const context = canvas.getContext('2d')
+        if (!context) throw new Error('Could not capture photo.')
+        context.drawImage(video, 0, 0, canvas.width, canvas.height)
+        setCapturedPhoto(canvas.toDataURL('image/jpeg', 0.92))
+        setCaptureError('')
+      } catch (error) {
+        setCaptureError(error.message)
+      } finally {
+        captureBusyRef.current = false
+      }
+    }, 10_000)
+    return () => clearInterval(interval)
+  }, [sessionActive, cameraStatus])
+
   const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0')
   const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0')
   const seconds = String(elapsedSeconds % 60).padStart(2, '0')
@@ -107,6 +138,9 @@ function App() {
           <div><p className="eyebrow">{elapsedSeconds === 0 ? 'TEST IS READY' : 'TEST STARTS IN'}</p><div className="timer">{hours}:{minutes}:{seconds}</div></div>
           <button className={`session-button ${sessionActive ? 'stop-button' : ''}`} onClick={sessionActive ? endSession : fullScreenApproved ? startSession : enterFullScreen} disabled={!sessionActive && fullScreenApproved && (elapsedSeconds > 0 || cameraStatus !== 'active')}>{sessionActive ? 'End Test' : fullScreenApproved ? 'Start Test' : 'Enter Full Screen'}</button>
         </section>
+
+        {captureError && <p className="capture-error">{captureError}</p>}
+        {capturedPhoto && <section className="captured-photo"><h3>Latest test photo</h3><img src={capturedPhoto} alt="Latest camera capture" /></section>}
 
         <footer className="app-footer">myAthena <span>·</span> Development build</footer>
       </main>
