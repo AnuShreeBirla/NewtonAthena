@@ -1,16 +1,34 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
 
 function App() {
   const videoRef = useRef(null)
+  const [cameraStatus, setCameraStatus] = useState('idle')
+  const [cameraError, setCameraError] = useState('')
 
   async function startCamera() {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: { facingMode: 'user' },
-    })
-    videoRef.current.srcObject = stream
-    await videoRef.current.play()
+    setCameraStatus('loading')
+    setCameraError('')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: 'user' },
+      })
+      videoRef.current.srcObject = stream
+      await videoRef.current.play()
+      setCameraStatus('active')
+    } catch (error) {
+      setCameraStatus('error')
+      setCameraError(`Could not start camera: ${error.message}`)
+    }
+  }
+
+  function stopCamera() {
+    const stream = videoRef.current?.srcObject
+    stream?.getTracks().forEach((track) => track.stop())
+    if (videoRef.current) videoRef.current.srcObject = null
+    setCameraStatus('idle')
+    setCameraError('')
   }
 
   return (
@@ -36,15 +54,15 @@ function App() {
         <section className="camera-card">
           <div className="card-heading">
             <div><h3>Camera preview</h3><p>Connect your camera to view the live feed.</p></div>
-            <span className="preview-badge">CAMERA</span>
+            <span className="preview-badge">{cameraStatus === 'active' ? 'LIVE' : 'CAMERA'}</span>
           </div>
           <div className="camera-preview">
-            <video ref={videoRef} className="camera-video" autoPlay muted playsInline />
-            <div className="camera-placeholder"><div className="camera-icon">◎</div><h3>Camera not connected</h3><p>Select Start camera to request access to your camera.</p></div>
+            <video ref={videoRef} className={`camera-video ${cameraStatus === 'active' ? 'visible' : ''}`} autoPlay muted playsInline />
+            {cameraStatus !== 'active' && <div className="camera-placeholder"><div className="camera-icon">◎</div><h3>{cameraStatus === 'loading' ? 'Connecting to camera…' : cameraStatus === 'error' ? 'Camera unavailable' : 'Camera not connected'}</h3><p>{cameraError || 'Select Start camera to request access to your camera.'}</p></div>}
           </div>
           <div className="camera-footer">
-            <span>Camera preview status</span>
-            <button className="secondary-button" onClick={startCamera}>Start camera</button>
+            <span>{cameraStatus === 'active' ? 'Camera connected' : 'Camera preview status'}</span>
+            <button className="secondary-button" onClick={cameraStatus === 'active' ? stopCamera : startCamera} disabled={cameraStatus === 'loading'}>{cameraStatus === 'active' ? 'Stop camera' : 'Start camera'}</button>
           </div>
         </section>
 
