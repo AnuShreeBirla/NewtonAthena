@@ -6,6 +6,15 @@ function App() {
   const streamRef = useRef(null)
   const [cameraStatus, setCameraStatus] = useState('idle')
   const [cameraError, setCameraError] = useState('')
+  const [elapsedSeconds, setElapsedSeconds] = useState(14 * 60)
+
+  useEffect(() => {
+    if (elapsedSeconds <= 0) return undefined
+    const timer = setInterval(() => {
+      setElapsedSeconds((seconds) => Math.max(seconds - 1, 0))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [elapsedSeconds])
 
   async function startCamera() {
     setCameraStatus('loading')
@@ -38,6 +47,10 @@ function App() {
   useEffect(() => () => {
     streamRef.current?.getTracks().forEach((track) => track.stop())
   }, [])
+
+  const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0')
+  const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0')
+  const seconds = String(elapsedSeconds % 60).padStart(2, '0')
 
   return (
     <div className="app-shell">
@@ -75,7 +88,7 @@ function App() {
         </section>
 
         <section className="session-card">
-          <div><p className="eyebrow">TEST STARTS IN</p><div className="timer">00:14:00</div></div>
+          <div><p className="eyebrow">{elapsedSeconds === 0 ? 'TEST IS READY' : 'TEST STARTS IN'}</p><div className="timer">{hours}:{minutes}:{seconds}</div></div>
           <button className="session-button" disabled>Enter Full Screen</button>
         </section>
 
